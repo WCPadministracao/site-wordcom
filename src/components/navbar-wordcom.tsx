@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { House, Users, Lightbulb, Star, FolderKanban } from "lucide-react";
 import { NavBar, type NavItem } from "@/components/ui/tubelight-navbar";
 
@@ -29,6 +30,26 @@ const SECOES: NavItem[] = [
   { name: "Projetos", hash: "#projetos", icon: FolderKanban },
 ];
 
+/* Rotas que não recebem a barra.
+
+   A /bio é a página de links do Instagram: ela existe para entregar cinco
+   destinos e nada mais. A barra pousava em cima da logo, que ali é o fundo da
+   página em tamanho real, e oferecia uma navegação que disputa atenção com os
+   próprios links — exatamente o que uma página de link na bio não pode fazer.
+
+   A decisão mora aqui, e não no `tubelight-navbar.tsx`: aquele é o componente
+   genérico da barra e não deve conhecer rotas deste site. Este invólucro já é
+   o lugar do que é específico da WordCom. */
+const ROTAS_SEM_BARRA = ["/bio"];
+
 export function NavbarWordcom() {
+  const rota = usePathname();
+
+  /* o hook roda antes do retorno curto, então a ordem dos hooks não varia */
+  const escondida = ROTAS_SEM_BARRA.some(
+    (r) => rota === r || rota.startsWith(`${r}/`),
+  );
+  if (escondida) return null;
+
   return <NavBar items={SECOES} />;
 }

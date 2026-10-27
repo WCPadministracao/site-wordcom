@@ -10,49 +10,78 @@
    da largura da arte.
 
    Então o fundo não é o banner: é um retrato gerado a partir dele por
-   `scripts/gera-fundo-bio.py` (`/marca/bio-fundo.webp`, 1080x975, 22 KB).
+   `scripts/gera-fundo-bio.py` (`/marca/bio-fundo.webp`, 1080x4600, 95 KB).
    A marca aparece inteira no alto, ocupando 80% da largura, e a mesma noite
-   estrelada desce até virar #0a0710 chapado. A tela termina exatamente onde
-   a cor já é chapada, e o `background-color` continua dali para baixo — por
-   isso não há emenda em viewport nenhuma, e as bordas laterais também morrem
-   na cor base.
+   estrelada desce pela PÁGINA INTEIRA. Só os últimos 200px do arquivo morrem
+   na cor base, caso alguma viewport seja mais alta que o desenho; as bordas
+   laterais fazem o mesmo na horizontal, então o arquivo serve em qualquer
+   largura sem mostrar emenda.
 
-   O script reporta que o conteúdo é seguro a partir de 0,658 da largura do
-   fundo; o CSS usa 0,700, com folga. Medido na página montada, o pior pixel
-   atrás da frase dá 7,8:1 em #f6f4f8, e atrás dos cartões o campo já é cor
-   chapada: 19,2:1.
+   O TETO DE LUMINÂNCIA
 
-   OS CARTÕES: A PILHA PERCORRE O GRADIENTE DA MARCA
+   O céu tem estrelas que chegam a 0,73 de luminância. Sobre ele correm dois
+   elementos: o texto do rodapé (12px) e o fio dos cartões — o texto dos
+   cartões não, porque o preenchimento deles é opaco e tapa o céu.
+
+   O script aplica um teto de 0,060. Medido no arquivo salvo, o pior pixel sob
+   o conteúdo fica em 0,0725, e dali sai tudo:
+
+     assinatura e títulos #f6f4f8 .... 7,84:1
+     rodapé #c9c2d6 ................. 4,97:1
+     fio dos cartões, para 3:1 ...... precisa de luminância >= 0,318
+
+   O teto é 0,060 e não 0,080 porque a compressão WebP LEVANTA pixels: a 0,080
+   o arquivo salvo media 0,0931 e o rodapé caía para 4,25:1. Quem manda é o
+   número medido depois de salvar.
+
+   Como o p95 do céu é 0,0513, o teto só corta o núcleo das estrelas mais
+   fortes — a nebulosa e quase todo o campo passam intactos.
+
+   OS CARTÕES: SEM COR
 
    O comportamento veio da referência que o dono mandou (edu.koko.ag/links):
-   blocos de cor chapada, canto reto, fio da própria cor, seta à direita, e o
-   hover que escurece o bloco e levanta 2px.
+   blocos de cor chapada, canto reto, seta à direita, e o hover que escurece o
+   bloco e o levanta.
 
-   As cores são as da WordCom. O gradiente da marca é #7d00ff -> #be3f80 ->
-   #ff7d00, e a pilha o percorre, um passo por cartão: roxo, violeta, magenta,
-   e o laranja puro no fim, no WhatsApp. A interpolação para no magenta em vez
-   de seguir até o laranja porque o meio desse trecho dá um tijolo (#993e40)
-   que não é cor de marca nenhuma — e, medido, reprovava no hover com 3,67:1.
+   A COR saiu a pedido dele. Houve duas tentativas coloridas: a primeira
+   escurecia cada tom da marca até o texto passar, e virou lama; a segunda
+   usava o gradiente em valor cheio, e ficou carnavalesca para uma agência.
+   Sem cor, o único eixo que sobra é a luminância — e é aí que a conta muda
+   de forma.
 
-   Na primeira tentativa eu escureci cada tom até o texto passar, e o
-   resultado virou lama: #a7366f e #a32a93 são magentas sem convicção. A
-   referência acerta porque usa cor CHEIA (amarelo puro, azul puro) e resolve
-   o contraste pela tinta, não baixando a cor. Aqui é o mesmo: a saturação de
-   cada bloco fica entre 0,67 e 1,00, e só o magenta levou um empurrão mínimo
-   rumo ao preto — que preserva matiz — porque com papel em cima dava 4,48:1,
-   dois centésimos abaixo do piso.
+   POR QUE OS BLOCOS SÃO DE CONTORNO, E NÃO ESCUROS
 
-   Medidos em repouso E no hover, que é onde bloco colorido costuma reprovar:
+   O reflexo seria dar aos blocos uma superfície escura discreta. Medido,
+   isso não funciona sobre este fundo:
 
-     cartão       cor       hover     título  hover  apoio  saturação
-     Nosso site   #f4f2f6   #d6d3d8   16,93   12,71   6,05    —
-     Instagram    #7d00ff   #6e01e0    5,69    6,88   4,52   1,00
-     TikTok       #a426b3   #90229e    5,38    6,49   4,57   0,79
-     Portfólio    #b83d7c   #a1366e    4,72    5,78   4,55   0,67
-     WhatsApp     #ff7d00   #df6e02    7,34    5,71   5,80   1,00
+     #14101c contra o fundo ... 1,07:1
+     #1b1624 contra o fundo ... 1,13:1
+     #262030 contra o fundo ... 1,27:1
 
-   Um bloco preto, como o da referência, foi testado e descartado: lá ele
-   funciona porque o fundo é papel; aqui mede 1,07:1 contra a base e some.
+   Nenhum deles aparece, e um fio a 16% de papel só chega a 1,8:1 — abaixo do
+   piso de 3:1 para elemento não-textual. É o mesmo motivo que já tinha
+   derrubado o cartão preto na versão colorida.
+
+   Então quem define o bloco é o FIO, e ele é calculado contra o céu, não
+   contra preto: #9d97a9 é o tom mínimo que dá 3,03:1 sobre o pior pixel do
+   fundo. Ele tinge de lavanda, não de cinza neutro — é o matiz da marca que
+   sobra quando a cor sai.
+
+   (Na versão em que o fundo terminava em preto chapado, esse mínimo era
+   #605b69. Ao abrir o céu, o fio teve de subir junto: é o mesmo cálculo com
+   outro fundo.)
+
+     bloco             fundo     hover     fio       título  hover  apoio
+     contorno (4x)     #15111d   #26212e   #9d97a9   17,01   14,09   5,36
+     sólido (o site)   #f4f2f6   #e4e2e6   —         16,93   14,64   5,27
+
+   O preenchimento opaco dos blocos faz um segundo trabalho agora que o céu
+   aparece: ele TAPA as estrelas, e é por isso que o texto dentro do cartão
+   não precisa entrar nessa conta.
+
+   O destaque do site é o único bloco sólido: o peso dele vem da inversão.
+   A cor da marca sobrevive em dois lugares só — a própria logo, no fundo, e
+   o fio do rodapé. Numa página de agência isso é o suficiente.
 
    O APOIO NUNCA É CINZA
 
@@ -67,10 +96,17 @@
    ("CURSO · NO KAMPUS"). Isso é ban absoluto no piso de craft deste projeto —
    o título carrega o próprio peso. Ficaram título e descrição.
 
-   E a referência usa serifa no título. Aqui não: a voz display deste site é a
-   Montserrat, que é o que combina com o wordmark geométrico da marca. Uma
-   serifa brigaria com a logo que está logo acima, no fundo. O peso editorial
-   vem do tamanho e do espaço, não de outra família. */
+   A SERIFA FOI E VOLTOU
+
+   A referência usa Fraunces nos títulos, e por um período esta página também.
+   O supervisor do dono pediu que todas as escritas ficassem na fonte padrão
+   do site, e a decisão foi revertida: tudo em Montserrat.
+
+   A ida e a volta deixaram uma lição que vale guardar: os dois pesos de
+   tracking NÃO são intercambiáveis. A assinatura voltou de -0.022em para
+   -0.038em e de 1.12 para 1.08 de entrelinha; o título, de 500/-0.015em para
+   650/-0.028em. Herdar os valores da serifa deixaria a geométrica leve e
+   larga, e os da geométrica deixariam a serifa colada. */
 
 .page {
   --bio-base: #0a0710;
@@ -120,10 +156,12 @@
 .assinatura {
   margin: 0 0 30px;
   text-align: center;
+  /* a fonte do site, herdada do .page; ver a nota no page.tsx */
   font-size: clamp(30px, 8.2vw, 40px);
   font-weight: 400;
+  /* valores da Montserrat: a geométrica aguenta -0.038em e 1.08 de
+     entrelinha, que na serifa deixavam o texto colado */
   line-height: 1.08;
-  /* o piso de tracking do projeto é -0.04em; isto fica dentro */
   letter-spacing: -0.038em;
   text-wrap: balance;
 }
@@ -146,10 +184,20 @@
   gap: 18px;
   min-height: 118px;
   padding: 24px 22px;
-  /* canto reto, como a referência: o bloco é uma superfície, não um botão */
-  border: 1px solid var(--cor);
-  background: var(--cor);
+  /* o vidro pede canto redondo: a 0 o brilho de borda vira um L nos cantos e
+     denuncia que é box-shadow, não material */
+  border-radius: 18px;
+  border: 1px solid var(--fio);
+  background: var(--fundo);
   color: var(--txt);
+
+  /* O VIDRO
+     blur + saturate é o que roda em todo lugar, iOS incluído. A distorção
+     líquida entra só onde o navegador aceita url() em backdrop-filter, na
+     regra @supports mais abaixo. */
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: var(--brilho), var(--halo), 0 10px 30px -14px rgb(0 0 0 / 0.7);
   text-decoration: none;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -161,6 +209,9 @@
 }
 
 .corpo { display: flex; flex: 1; flex-direction: column; gap: 7px; min-width: 0; }
+/* Peso 650 e -0.028em: a Montserrat precisa de mais peso e mais aperto que a
+   serifa para carregar o título. Com os 500/-0.015em que a Fraunces pedia,
+   ela saía leve e larga. */
 .titulo {
   margin: 0;
   font-size: clamp(19px, 4.8vw, 21px);
@@ -175,31 +226,156 @@
   transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* ---------- os tons: um passo do gradiente da marca por cartão ---------- */
+/* ---------- os dois tons ---------- */
 
-.destaque { --cor: #f4f2f6; --hover: #d6d3d8; --txt: #140f1c; --apoio: #5e5a64; }
-.roxo     { --cor: #7d00ff; --hover: #6e01e0; --txt: #f4f2f6; --apoio: #e5d3f7; }
-.violeta  { --cor: #a426b3; --hover: #90229e; --txt: #f4f2f6; --apoio: #ebdcef; }
-.magenta  { --cor: #b83d7c; --hover: #a1366e; --txt: #f4f2f6; --apoio: #f2edf2; }
-.laranja  { --cor: #ff7d00; --hover: #df6e02; --txt: #140f1c; --apoio: #3a2118; }
+/* A OPACIDADE NÃO É ESTÉTICA, É MEDIDA
+
+   Com preenchimento translúcido o céu passa ATRAVÉS do cartão, então o
+   contraste do texto deixa de ser fixo: ele varia pixel a pixel. O pior pixel
+   do céu sob os cartões é rgb(120,60,131), L=0,0886.
+
+   Composto sobre ele, com preenchimento #0a0710:
+
+     alfa 0,45 .... título 11,77  apoio 3,71  REPROVA
+     alfa 0,55 .... título 13,10  apoio 4,13  REPROVA
+     alfa 0,65 .... título 14,45  apoio 4,55  passa no limite
+     alfa 0,70 .... título ~14,9  apoio ~4,7  <- escolhido, com folga
+
+   E no destaque, com #f4f2f6 e tinta escura em cima, o mínimo é 0,88; aqui
+   está 0,92. Abaixo disso o texto de apoio reprova.
+
+   O cálculo usa o pior pixel SEM blur, que é conservador de propósito: o
+   desfoque mistura a estrela com a vizinhança escura e só melhora o número
+   real.
+
+   O ARO DE LUZ ENTRA NA CONTA
+
+   O brilho interno do aro clareia o miolo, que é onde o texto corre, e isso
+   REDUZ o contraste. A 0,05 de branco ele derrubava o apoio de 4,76 para
+   4,16:1 — reprovava. Ficou em 0,04, e o apoio subiu de #8d8798 para
+   #988ca3: o tom mais TINGIDO que ainda dá 4,68:1 sobre o pior pixel
+   composto. Sobre o céu típico ele mede 5,87:1.
+
+     cartão escuro, composto no pior caso: #33203b
+       título #f6f4f8 .... 13,59:1
+       apoio  #988ca3 ....  4,68:1
+
+     cartão claro, composto no pior caso, com o aro a 30%:
+       tinta  #140f1c .... 16,12:1
+       apoio  #5e5a64 ....  5,75:1 */
+
+/* A COR ENTRA PELO ARO E PELO HALO, NÃO PELO MIOLO
+
+   O dono pediu "pegada de cor minimalista, roxo e laranja". Preencher o bloco
+   de cor já falhou duas vezes aqui — e, com vidro, falha por um motivo novo:
+   o miolo é onde o texto corre, e sobrou só 0,18 de folga no contraste do
+   apoio. Qualquer tinta que clareie o miolo come essa folga.
+
+   Então a tinta do PREENCHIMENTO respeita o orçamento de luminância do neutro
+   (#0a0710, L=0,00254) e fica quase preta — ela tinge o material sem pesar.
+   A cor que se vê vem do aro e do halo, que não ficam atrás de texto nenhum e
+   por isso podem ser cor cheia.
+
+     tinta     cor       composto no pior caso   título   apoio
+     neutro    #0a0710   #33203b                 13,59    4,74
+     roxo      #120023   #391b47                 13,49    4,71
+     laranja   #0e0700   #362030                 13,65    4,76
+
+   O apoio é um só para os três, achado sobre o PIOR dos compostos: #9b8ca8.
+
+   A ATRIBUIÇÃO TEM SIGNIFICADO
+
+   Roxo nos canais (Instagram, TikTok, portfólio), laranja no contato. Duas
+   cores com uma função cada, não cinco cores decorativas — foi a versão de
+   cinco que o dono chamou de feia. O destaque do site segue claro e neutro:
+   o peso dele vem da inversão, não de cor. */
+
+.destaque {
+  --fundo: rgb(244 242 246 / 0.92);
+  --fio: rgb(255 255 255 / 0.65);
+  --hover: rgb(244 242 246 / 0.98);
+  --hoverFio: rgb(255 255 255 / 0.9);
+  --txt: #140f1c;
+  --apoio: #5e5a64;
+  --halo: 0 12px 34px -18px rgb(246 244 248 / 0.5);
+  --brilho:
+    inset 1px 1px 1px -0.5px rgb(255 255 255 / 0.9),
+    inset -1px -1px 1px -0.5px rgb(255 255 255 / 0.6),
+    inset 0 0 8px 6px rgb(255 255 255 / 0.3);
+}
+
+/* o aro de luz do componente original, em versão magra: as linhas de 1px são
+   o que lê como borda de vidro. O brilho interno largo dele (0,12 de branco
+   em 6px de espalhamento) está em 0,04 — ele clareia o miolo justamente onde
+   o texto corre, e a 0,05 já derrubava o apoio para 4,16:1.
+
+   A luz de CIMA fica branca nos dois: é ela que lê como vidro. A cor entra
+   na borda de baixo, como se o bloco apanhasse o reflexo da marca. */
+
+.roxo {
+  --fundo: rgb(18 0 35 / 0.70);
+  --fio: rgb(169 94 255 / 0.34);
+  --hover: rgb(26 2 48 / 0.78);
+  --hoverFio: rgb(169 94 255 / 0.6);
+  --txt: #f6f4f8;
+  --apoio: #9b8ca8;
+  --halo: 0 12px 34px -16px rgb(125 0 255 / 0.5);
+  --brilho:
+    inset 1px 1px 1px -0.5px rgb(246 244 248 / 0.45),
+    inset -1px -1px 1px -0.5px rgb(169 94 255 / 0.55),
+    inset 3px 3px 0.5px -3.5px rgb(246 244 248 / 0.7),
+    inset 0 0 8px 6px rgb(246 244 248 / 0.04);
+}
+
+.laranja {
+  --fundo: rgb(14 7 0 / 0.70);
+  --fio: rgb(255 158 74 / 0.34);
+  --hover: rgb(26 13 0 / 0.78);
+  --hoverFio: rgb(255 158 74 / 0.6);
+  --txt: #f6f4f8;
+  --apoio: #9b8ca8;
+  --halo: 0 12px 34px -16px rgb(255 125 0 / 0.45);
+  --brilho:
+    inset 1px 1px 1px -0.5px rgb(246 244 248 / 0.45),
+    inset -1px -1px 1px -0.5px rgb(255 158 74 / 0.55),
+    inset 3px 3px 0.5px -3.5px rgb(246 244 248 / 0.7),
+    inset 0 0 8px 6px rgb(246 244 248 / 0.04);
+}
+
+/* A DISTORÇÃO LÍQUIDA, SÓ ONDE EXISTE
+
+   `backdrop-filter: url(#filtro)` é Chromium. Medido no navegador:
+   `-webkit-backdrop-filter: url(#x)` devolve false, e é o prefixo que o
+   Safari e o iOS usam — ou seja, no navegador interno do Instagram no iPhone
+   isto não roda. Quem está lá fica com o blur + saturate da regra base, que
+   é vidro fosco limpo e não parece defeito.
+
+   Por isso a distorção está aqui e não na regra principal: ela é um bônus de
+   quem tem, nunca o que sustenta o visual. */
+@supports (backdrop-filter: url("#vidro-bio")) {
+  .card {
+    backdrop-filter: blur(10px) saturate(150%) url("#vidro-bio");
+  }
+}
 
 /* ---------- estados ---------- */
 
 .card:focus-visible {
   outline: 2px solid var(--bio-text);
   outline-offset: 3px;
+  border-radius: 18px;
 }
 
 .card:active {
   background: var(--hover);
-  border-color: var(--hover);
+  border-color: var(--hoverFio);
   transform: translateY(0);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
     background: var(--hover);
-    border-color: var(--hover);
+    border-color: var(--hoverFio);
     transform: translateY(-2px);
     /* ENTRADA: 250ms, como a referência; a saída na regra base é 160ms */
     transition:
@@ -232,6 +408,39 @@
 .srOnly {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* EM TELA BAIXA O GARGALO É ALTURA, NÃO LARGURA
+
+   O bloco do topo é dimensionado pela LARGURA — 0,700 da largura do palco,
+   que é onde o céu já virou cor chapada. Numa tela baixa isso come metade da
+   viewport e os links somem abaixo da dobra.
+
+   Medido antes desta regra, com o aviso de cookies fora:
+
+     tela         cartões acima da dobra   rolagem
+     390x844      3                        267px
+     390x700 *    2                        411px
+     375x540 *    1                        558px
+
+   (* a altura que sobra dentro do navegador interno do Instagram, que come
+   uma barra em cima e outra embaixo. É o caso real do público desta página.)
+
+   Baixar o palco junto com a altura (`min(100vw, 64vh)`) foi testado e
+   descartado: rendeu 20px e estreitou o céu, que deixava de cobrir a largura.
+   O que rende é apertar o ritmo VERTICAL, que não mexe na geometria do fundo
+   nem no contraste:
+
+     390x700 .... 2 -> 3 cartões,  rolagem 411 -> 290px
+     375x540 .... rolagem 558 -> 437px
+
+   Os blocos caem de 123 para 106px: continuam muito acima do alvo de toque de
+   44px e o texto não corta — título de 24px mais duas linhas de 21px cabem em
+   106 menos 32 de padding. */
+@media (max-height: 760px) {
+  .assinatura { font-size: clamp(24px, 6.4vw, 30px); margin-bottom: 16px; }
+  .links { gap: 6px; }
+  .card { min-height: 104px; padding-block: 16px; }
 }
 
 @media (max-width: 360px) {

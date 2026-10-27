@@ -13,10 +13,23 @@ export const metadata: Metadata = {
   },
 };
 
+/* A FONTE É A DO SITE.
+
+   Por um período esta página usou Fraunces, a serifa da referência que o dono
+   mandou (edu.koko.ag). A decisão foi revertida: o supervisor dele pediu que
+   todas as escritas fiquem na fonte padrão do site.
+
+   Fica o registro porque a ida e a volta custaram ajuste de tracking nos dois
+   sentidos — serifa e geométrica não querem o mesmo aperto, e os valores no
+   bio.module.css são da Montserrat, não herdados da serifa.
+
+   A Montserrat já vem do layout.tsx, na variável --font-wordcom, e o .page a
+   declara. Nada é carregado aqui. */
+
 export const viewport: Viewport = { themeColor: "#0a0710" };
 
-/* A pilha percorre o gradiente da marca, do roxo ao laranja, com o destaque
-   em papel na frente. Os tons e o porquê de cada um estão no bio.module.css. */
+/* Sem cor nos blocos: um sólido em papel para o site e quatro de contorno.
+   O porquê e as medições estão no bio.module.css. */
 const links = [
   {
     title: "Nosso site",
@@ -34,13 +47,13 @@ const links = [
     title: "TikTok",
     detail: "Outro formato, outro ritmo: conteúdo curto sobre marca.",
     href: "https://www.tiktok.com/@wordcompublicidad",
-    tom: "violeta",
+    tom: "roxo",
   },
   {
     title: "Portfólio de vídeos",
     detail: "Campanhas, institucionais e cobertura de eventos.",
     href: "https://www.youtube.com/@wordcompublicidade360",
-    tom: "magenta",
+    tom: "roxo",
   },
   {
     title: "Vamos conversar",
@@ -49,6 +62,23 @@ const links = [
     tom: "laranja",
   },
 ];
+
+/* A distorção "líquida" do vidro, do componente que o dono mandou, com o
+   `scale` baixado de 70 para 18: a 70 o céu estrelado vira borrão e as
+   estrelas se esticam em riscos. */
+function FiltroVidro() {
+  return (
+    <svg aria-hidden="true" className={styles.srOnly} focusable="false">
+      <defs>
+        <filter id="vidro-bio" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="ruido" />
+          <feGaussianBlur in="ruido" stdDeviation="2" result="ruidoSuave" />
+          <feDisplacementMap in="SourceGraphic" in2="ruidoSuave" scale="18" xChannelSelector="R" yChannelSelector="B" />
+        </filter>
+      </defs>
+    </svg>
+  );
+}
 
 export default function BioPage() {
   return (
@@ -79,6 +109,10 @@ export default function BioPage() {
             </a>
           ))}
         </nav>
+
+        {/* O filtro de distorção do vidro. Fica inerte onde o navegador não
+            aceita url() em backdrop-filter — ver bio.module.css. */}
+        <FiltroVidro />
 
         <footer className={styles.footer}>
           <span className={styles.brandLine} aria-hidden="true" />
