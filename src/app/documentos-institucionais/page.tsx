@@ -7,7 +7,7 @@ import styles from "./documentos.module.css";
 
 export const metadata: Metadata = {
   title: "Documentos institucionais | WordCom",
-  description: "Consulte e baixe o Código de Ética e os Procedimentos de Compliance da WordCom.",
+  description: "Consulte e baixe os documentos de ética, compliance, segurança da informação, integridade corporativa e relacionamento com agentes públicos da WordCom.",
   robots: { index: true, follow: true },
 };
 

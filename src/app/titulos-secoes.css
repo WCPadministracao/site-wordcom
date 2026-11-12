@@ -45,6 +45,13 @@ main > .section h2[data-rotating-title] {
   font-size: clamp(16px, 5.6vw, min(76px, var(--titulo-secao-tamanho)));
 }
 
+@media (max-width: 700px) {
+  main > .section h2[data-rotating-title] {
+    font-size: var(--titulo-solucoes-mobile, clamp(16px, 5.6vw, 40px));
+    font-family: var(--font-wordcom), Arial, sans-serif;
+  }
+}
+
 main > .section .heading {
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;

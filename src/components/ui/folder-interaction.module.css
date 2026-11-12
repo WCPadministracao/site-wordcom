@@ -20,4 +20,9 @@
 .documentLink svg { flex: none; }
 .download { display: grid; place-items: center; width: 44px; height: 44px; color: #ffbb7a; }
 .root :is(a, button):focus-visible { outline: 3px solid #ffbb7a; outline-offset: 4px; }
+@media (max-width: 600px) {
+  .root { --folder-paper-spread: 48%; }
+  .documentLink { min-width: 0; }
+  .download { flex: none; }
+}
 @media (hover: hover) and (pointer: fine) { .documents a:hover { color: #ffbb7a; } }

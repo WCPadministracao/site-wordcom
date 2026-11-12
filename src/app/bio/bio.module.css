@@ -410,38 +410,9 @@
   overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
 }
 
-/* EM TELA BAIXA O GARGALO É ALTURA, NÃO LARGURA
-
-   O bloco do topo é dimensionado pela LARGURA — 0,700 da largura do palco,
-   que é onde o céu já virou cor chapada. Numa tela baixa isso come metade da
-   viewport e os links somem abaixo da dobra.
-
-   Medido antes desta regra, com o aviso de cookies fora:
-
-     tela         cartões acima da dobra   rolagem
-     390x844      3                        267px
-     390x700 *    2                        411px
-     375x540 *    1                        558px
-
-   (* a altura que sobra dentro do navegador interno do Instagram, que come
-   uma barra em cima e outra embaixo. É o caso real do público desta página.)
-
-   Baixar o palco junto com a altura (`min(100vw, 64vh)`) foi testado e
-   descartado: rendeu 20px e estreitou o céu, que deixava de cobrir a largura.
-   O que rende é apertar o ritmo VERTICAL, que não mexe na geometria do fundo
-   nem no contraste:
-
-     390x700 .... 2 -> 3 cartões,  rolagem 411 -> 290px
-     375x540 .... rolagem 558 -> 437px
-
-   Os blocos caem de 123 para 106px: continuam muito acima do alvo de toque de
-   44px e o texto não corta — título de 24px mais duas linhas de 21px cabem em
-   106 menos 32 de padding. */
-@media (max-height: 760px) {
-  .assinatura { font-size: clamp(24px, 6.4vw, 30px); margin-bottom: 16px; }
-  .links { gap: 6px; }
-  .card { min-height: 104px; padding-block: 16px; }
-}
+/* Keep typography and cards independent of viewport height: mobile browser
+   bars can change it during scrolling. Width-based sizing above remains
+   responsive, while shorter screens simply retain their natural scroll. */
 
 @media (max-width: 360px) {
   .page { padding-inline: 18px; }

@@ -7,8 +7,11 @@ import { ArrowUpRight, Download } from "lucide-react";
 import styles from "./folder-interaction.module.css";
 
 const documents = [
-  { title: "Código e Ética", file: "codigo-de-etica-wordcom-2024", pages: 39 },
-  { title: "Procedimentos de Compliance", file: "procedimentos-de-compliance-wordcom-2024", pages: 3 },
+  { title: "Código e Ética", shortTitle: "Código e Ética", file: "codigo-de-etica-wordcom-2024", pages: 39 },
+  { title: "Procedimentos de Compliance", shortTitle: "Procedimentos de Compliance", file: "procedimentos-de-compliance-wordcom-2024", pages: 3 },
+  { title: "Manual da Política de Segurança da Informação", shortTitle: "Segurança da Informação", file: "manual-da-politica-de-seguranca-da-informacao", pages: 22 },
+  { title: "Programa de Integridade Corporativa", shortTitle: "Integridade Corporativa", file: "programa-de-integridade-corporativa", pages: 11 },
+  { title: "Normativo Interno — Agentes Públicos", shortTitle: "Agentes Públicos", file: "normativa-agente-publico-normativo-interno", pages: 19 },
 ];
 
 export default function FolderInteraction() {
@@ -38,12 +41,12 @@ export default function FolderInteraction() {
                 style={{ pointerEvents: isOpen ? "auto" : "none" }}
                 initial={false}
                 animate={{ transform: isOpen
-                  ? `translate(${index === 0 ? "-58%" : "58%"}, -135px) rotate(${index === 0 ? -8 : 8}deg)`
-                  : `translate(${index === 0 ? "-18%" : "18%"}, 0px) rotate(${index === 0 ? -3 : 3}deg)` }}
+                  ? `translate(calc(${(index / (documents.length - 1) * 2 - 1) * 1.5} * var(--folder-paper-spread, 68%)), -135px) rotate(${(index / (documents.length - 1) * 2 - 1) * 12}deg)`
+                  : `translate(${(index / (documents.length - 1) * 2 - 1) * 18}%, 0px) rotate(${(index / (documents.length - 1) * 2 - 1) * 3}deg)` }}
                 transition={transition}
               >
                 <Image src={`/documentos/${document.file}-capa.png`} alt="" width={480} height={680} sizes="120px" className={styles.cover} priority />
-                <span className={styles.paperTitle}>{document.title}</span>
+                <span className={styles.paperTitle}>{document.shortTitle}</span>
               </motion.a>
             ))}
           </div>
@@ -64,7 +67,7 @@ export default function FolderInteraction() {
             <span className={styles.folderLabel}>
               <Image src="/marca/wordcom-logo.png" alt="" width={140} height={58} />
               <span>Documentos institucionais</span>
-              <small>2 PDFs</small>
+              <small>{documents.length} PDFs</small>
             </span>
           </motion.button>
         </div>

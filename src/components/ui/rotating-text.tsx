@@ -14,6 +14,7 @@ interface RotatingTextProps {
 const subscribeHydration = () => () => {};
 const clientSnapshot = () => true;
 const serverSnapshot = () => false;
+const strategyWords = ["conectar", "comunicar", "transformar"];
 
 // React Bits' flip preset, with last-letter-first stagger and the supplied timing.
 export default function RotatingText({ texts, rotationInterval = 4100, staggerDuration = 0.1, highlightColor = "#790870" }: RotatingTextProps) {
@@ -64,8 +65,47 @@ export default function RotatingText({ texts, rotationInterval = 4100, staggerDu
 }
 
 export function TituloSolucoes() {
-  return <h2 className={styles.title} data-rotating-title aria-label="Estratégia para conectar, comunicar e transformar.">
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const heading = headingRef.current;
+    const context = document.createElement("canvas").getContext("2d");
+    if (!heading || !context) return;
+    const mobile = window.matchMedia("(max-width: 700px)");
+    let disposed = false;
+    const fit = () => {
+      if (disposed) return;
+      if (!mobile.matches) {
+        heading.style.removeProperty("--titulo-solucoes-mobile");
+        return;
+      }
+      const font = getComputedStyle(heading);
+      context.font = `${font.fontStyle} ${font.fontWeight} 100px ${font.fontFamily}`;
+      const widest = Math.max(...strategyWords.map(word => context.measureText(word).width));
+      // Include the highlight's 0.56em padding and the 0.2em gap, with 2px of rounding clearance.
+      const referenceWidth = context.measureText("Estratégia para").width + widest + 76;
+      const size = Math.floor((heading.clientWidth - 2) / referenceWidth * 1000) / 10;
+      const value = `${size}px`;
+      if (heading.style.getPropertyValue("--titulo-solucoes-mobile") !== value) {
+        heading.style.setProperty("--titulo-solucoes-mobile", value);
+      }
+    };
+    const observer = new ResizeObserver(fit);
+    observer.observe(heading);
+    mobile.addEventListener("change", fit);
+    document.fonts.addEventListener("loadingdone", fit);
+    document.fonts.ready.then(fit);
+    fit();
+    return () => {
+      disposed = true;
+      observer.disconnect();
+      mobile.removeEventListener("change", fit);
+      document.fonts.removeEventListener("loadingdone", fit);
+    };
+  }, []);
+
+  return <h2 ref={headingRef} className={styles.title} data-rotating-title aria-label="Estratégia para conectar, comunicar e transformar.">
     <span className={styles.fixed} aria-hidden="true">Estratégia para</span>{" "}
-    <RotatingText texts={["conectar", "comunicar", "transformar"]} />
+    <RotatingText texts={strategyWords} />
   </h2>;
 }

@@ -7,6 +7,7 @@ node_modules/
 skills/
 reference/
 .env*
+Senha Site Wordcom - envio do Forms.txt
 *.tsbuildinfo
 CLAUDE.md
 skills-lock.json

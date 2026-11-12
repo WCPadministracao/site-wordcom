@@ -299,6 +299,13 @@ Conferido nas três rotas depois da mudança: `/bio` sem a barra, `/` com os cin
 
 ## Resolução: medido em tela de celular
 
+Atualização de 27/10/2026: a regra `@media (max-height: 760px)` foi removida.
+Ela fazia a assinatura e os cartões mudarem de tamanho quando a altura disponível
+cruzava 760px, inclusive durante mudanças das barras do navegador mobile. Agora,
+fonte, padding e altura dos cartões permanecem estáveis quando só a altura muda;
+o ajuste responsivo continua dependendo da largura. As medições abaixo registram
+o comportamento anterior, não uma regra a ser reintroduzida.
+
 O gargalo desta página é **altura**, não largura. O bloco do topo é dimensionado pela
 largura (0,700 do palco, que é onde o céu vira cor chapada), então numa tela baixa ele come
 metade da viewport e os links somem abaixo da dobra.

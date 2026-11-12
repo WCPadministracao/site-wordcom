@@ -33,9 +33,12 @@ export const metadata: Metadata = {
   description:
     "Publicidade, marketing, conteúdo, audiovisual e eventos em uma comunicação integrada.",
   icons: {
-    icon: "/marca/favicon.svg",
-    shortcut: "/marca/favicon.svg",
-    apple: "/marca/favicon.svg",
+    icon: [
+      { url: "/marca/favicon.svg", type: "image/svg+xml" },
+      { url: "/marca/favicon-32.png", type: "image/png", sizes: "32x32" },
+    ],
+    shortcut: "/favicon.ico?v=wordcom-20261027",
+    apple: { url: "/marca/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
   },
   openGraph: {
     title: "WordCom — A última PALAVRA em comunicação",

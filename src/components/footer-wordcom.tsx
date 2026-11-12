@@ -30,6 +30,14 @@ export function FooterWordcom({ whatsapp, solucoes, homeHref = "" }: FooterWordc
           <p className="footerDescription">
             Publicidade, marketing e comunicação integrada para conectar marcas, pessoas e resultados.
           </p>
+          <Image
+            className="footerPartnerSeal"
+            src="/marca/mlabs-partner-silver.png"
+            alt="Selo mLabs Partner Silver"
+            width={1474}
+            height={586}
+            sizes="(max-width: 600px) 184px, 204px"
+          />
         </div>
 
         <nav className="footerNavigation" aria-labelledby="footer-navegacao">
@@ -58,6 +66,9 @@ export function FooterWordcom({ whatsapp, solucoes, homeHref = "" }: FooterWordc
           <nav className="footerDocuments" aria-label="Ética e compliance">
             <Link href="/documentos-institucionais"><ShieldCheck size={20} aria-hidden="true" /><span>Código e Ética</span></Link>
             <Link href="/documentos-institucionais"><FileCheck2 size={20} aria-hidden="true" /><span>Procedimentos de Compliance</span></Link>
+            <Link href="/documentos-institucionais"><ShieldCheck size={20} aria-hidden="true" /><span>Manual da Política de Segurança da Informação</span></Link>
+            <Link href="/documentos-institucionais"><FileCheck2 size={20} aria-hidden="true" /><span>Programa de Integridade Corporativa</span></Link>
+            <Link href="/documentos-institucionais"><ShieldCheck size={20} aria-hidden="true" /><span>Normativo Interno — Agentes Públicos</span></Link>
           </nav>
           <div className="footerLocations">
             <h3>Onde estamos</h3>
