@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 /* Vídeo de fundo da seção Estrutura.
 
@@ -20,51 +20,46 @@ type FundoVideoProps = {
   src?: string;
   poster?: string;
   className?: string;
+  loop?: boolean;
 };
 
 export function FundoVideo({
   src,
   poster = "/midia/estrutura/fabrica-poster.webp",
   className = "aboutVideo",
+  loop = true,
 }: FundoVideoProps = {}) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [quieto, setQuieto] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const ler = () => setQuieto(mq.matches);
-    ler();
-    mq.addEventListener("change", ler);
-    return () => mq.removeEventListener("change", ler);
-  }, []);
 
   useEffect(() => {
     const v = ref.current;
     if (!v) return undefined;
 
-    if (quieto) {
-      v.pause();
-      return undefined;
-    }
+    const movimentoReduzido = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visivel = false;
 
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          /* o play pode ser recusado pela política de autoplay; sem o catch o
-             navegador registra uma promessa rejeitada no console */
-          v.play().catch(() => {});
-        } else {
-          v.pause();
-        }
-      },
-      { rootMargin: "200px 0px" },
-    );
+    const sincronizar = () => {
+      if (visivel && !document.hidden && !movimentoReduzido.matches && (loop || !v.ended)) {
+        v.play().catch(() => {});
+      } else {
+        v.pause();
+      }
+    };
+
+    const obs = new IntersectionObserver(([e]) => {
+      visivel = e.isIntersecting;
+      sincronizar();
+    }, { rootMargin: "200px 0px" });
     obs.observe(v);
+    movimentoReduzido.addEventListener("change", sincronizar);
+    document.addEventListener("visibilitychange", sincronizar);
     return () => {
       obs.disconnect();
+      movimentoReduzido.removeEventListener("change", sincronizar);
+      document.removeEventListener("visibilitychange", sincronizar);
       v.pause();
     };
-  }, [quieto, src]);
+  }, [src, loop]);
 
   return (
     <video
@@ -73,7 +68,7 @@ export function FundoVideo({
       poster={poster}
       preload="none"
       muted
-      loop
+      loop={loop}
       playsInline
       /* decorativo: o conteúdo da seção está no texto ao lado */
       aria-hidden

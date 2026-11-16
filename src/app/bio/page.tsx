@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { FundoVideo } from "@/components/fundo-video";
 import { LiquidMetalLink } from "@/components/ui/liquid-metal-button";
 import styles from "./bio.module.css";
 
@@ -34,37 +36,31 @@ const links = [
     title: "Nosso site",
     detail: "A agência por inteiro: soluções, cases e método.",
     href: "https://wordcom.com.br/",
-    tom: "destaque",
   },
   {
     title: "Instagram",
     detail: "Criação, bastidores e os projetos no dia a dia da agência.",
     href: "https://www.instagram.com/wordcom.oficial/",
-    tom: "roxo",
   },
   {
     title: "TikTok",
     detail: "Outro formato, outro ritmo: conteúdo curto sobre marca.",
     href: "https://www.tiktok.com/@wordcompublicidad",
-    tom: "roxo",
   },
   {
     title: "Portfólio de vídeos",
     detail: "Campanhas, institucionais e cobertura de eventos.",
     href: "https://www.youtube.com/@wordcompublicidade360",
-    tom: "roxo",
   },
   {
     title: "Túnel Santos–Guarujá Formulário",
     detail: "Acesse o formulário da WordCom no Google Forms.",
     href: "https://docs.google.com/forms/d/e/1FAIpQLSd8hXmWXn1Z7UeDJRFWfHsyWic6J1i3TyNBwaYXjN0VAFAaUA/viewform",
-    tom: "formulario",
   },
   {
     title: "Vamos conversar",
     detail: "Conta o que a sua marca precisa e a gente responde pelo WhatsApp.",
     href: "https://api.whatsapp.com/send/?phone=5511974256616&text=Ol%C3%A1%21+Conheci+a+WordCom+pelo+site+e+gostaria+de+conversar+sobre+um+projeto+de+comunica%C3%A7%C3%A3o+para+a+minha+empresa.&type=phone_number&app_absent=0",
-    tom: "laranja",
   },
 ];
 
@@ -88,21 +84,21 @@ function FiltroVidro() {
 export default function BioPage() {
   return (
     <main id="inicio" className={styles.page}>
+      <FundoVideo src="/midia/bio-polvo.mp4" poster="/midia/bio-polvo.webp" className={styles.videoFundo} loop />
       <div className={styles.content}>
-        {/* A marca vive na camada de fundo, em tamanho real. O nome dela entra
-            aqui só para o leitor de tela, e a assinatura é o título visível. */}
+        <Image className={styles.logo} src="/marca/bio-logo-polvo-laranja.png" alt="" width={1402} height={1122} sizes="184px" preload />
         <h1 className={styles.assinatura}>
           <span className={styles.srOnly}>WordCom — </span>
           A última palavra<br />em <strong>comunicação.</strong>
         </h1>
 
         <nav aria-label="Canais da WordCom" className={styles.links}>
-          {links.map(({ title, detail, href, tom }, index) => (
+          {links.map(({ title, detail, href }, index) => (
             <LiquidMetalLink
               key={title}
               href={href}
               glintDelay={180 + index * 850}
-              className={`${styles.card} ${styles[tom]}`}
+              className={styles.card}
             >
               <span className={styles.corpo}>
                 <h2 className={styles.titulo}>{title}</h2>
@@ -119,7 +115,6 @@ export default function BioPage() {
         <FiltroVidro />
 
         <footer className={styles.footer}>
-          <span className={styles.brandLine} aria-hidden="true" />
           <p>Agência de publicidade e marketing 360º</p>
         </footer>
       </div>
