@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@paper-design/shaders": "^0.0.82",
     "@radix-ui/react-accordion": "^1.2.21",
     "embla-carousel": "^8.6.0",
     "embla-carousel-react": "^8.6.0",

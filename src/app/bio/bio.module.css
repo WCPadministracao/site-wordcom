@@ -79,9 +79,8 @@
    aparece: ele TAPA as estrelas, e é por isso que o texto dentro do cartão
    não precisa entrar nessa conta.
 
-   O destaque do site é o único bloco sólido: o peso dele vem da inversão.
-   A cor da marca sobrevive em dois lugares só — a própria logo, no fundo, e
-   o fio do rodapé. Numa página de agência isso é o suficiente.
+   O destaque do site vem da inversão. O formulário usa o mesmo vidro
+   dos canais, com degradê violeta e aro lilás mais marcado.
 
    O APOIO NUNCA É CINZA
 
@@ -208,7 +207,7 @@
     transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.corpo { display: flex; flex: 1; flex-direction: column; gap: 7px; min-width: 0; }
+.corpo { position: relative; display: flex; flex: 1; flex-direction: column; gap: 7px; min-width: 0; }
 /* Peso 650 e -0.028em: a Montserrat precisa de mais peso e mais aperto que a
    serifa para carregar o título. Com os 500/-0.015em que a Fraunces pedia,
    ela saía leve e larga. */
@@ -222,11 +221,12 @@
 }
 .desc { font-size: 14px; line-height: 1.5; color: var(--apoio); }
 .seta {
+  position: relative;
   flex-shrink: 0;
   transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* ---------- os dois tons ---------- */
+/* ---------- variações dos cartões ---------- */
 
 /* A OPACIDADE NÃO É ESTÉTICA, É MEDIDA
 
@@ -291,6 +291,9 @@
    o peso dele vem da inversão, não de cor. */
 
 .destaque {
+  --metal-light: #fffaff;
+  --metal-edge: #78618f;
+  --metal-glint: #8753c4;
   --fundo: rgb(244 242 246 / 0.92);
   --fio: rgb(255 255 255 / 0.65);
   --hover: rgb(244 242 246 / 0.98);
@@ -312,7 +315,11 @@
    A luz de CIMA fica branca nos dois: é ela que lê como vidro. A cor entra
    na borda de baixo, como se o bloco apanhasse o reflexo da marca. */
 
-.roxo {
+.roxo,
+.formulario {
+  --metal-light: #edd5ff;
+  --metal-edge: #b77ff5;
+  --metal-strength: 0.90;
   --fundo: rgb(18 0 35 / 0.70);
   --fio: rgb(169 94 255 / 0.34);
   --hover: rgb(26 2 48 / 0.78);
@@ -327,7 +334,17 @@
     inset 0 0 8px 6px rgb(246 244 248 / 0.04);
 }
 
+.formulario {
+  --fundo: linear-gradient(115deg, rgb(83 41 137 / 0.92), rgb(55 23 95 / 0.88) 56%, rgb(44 18 63 / 0.88));
+  --fio: rgb(205 159 255 / 0.74);
+  --hover: linear-gradient(115deg, rgb(96 48 153 / 0.94), rgb(65 29 110 / 0.92) 56%, rgb(52 23 73 / 0.92));
+  --hoverFio: rgb(218 181 255 / 0.92);
+  --apoio: #e7d8f4;
+}
+
 .laranja {
+  --metal-light: #ffd3ac;
+  --metal-edge: #ab622c;
   --fundo: rgb(14 7 0 / 0.70);
   --fio: rgb(255 158 74 / 0.34);
   --hover: rgb(26 13 0 / 0.78);
@@ -369,11 +386,11 @@
 .card:active {
   background: var(--hover);
   border-color: var(--hoverFio);
-  transform: translateY(0);
+  transform: scale(0.988);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .card:hover {
+  .card:hover:not(:active) {
     background: var(--hover);
     border-color: var(--hoverFio);
     transform: translateY(-2px);

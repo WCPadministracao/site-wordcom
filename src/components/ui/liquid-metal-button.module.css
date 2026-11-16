@@ -1,0 +1,64 @@
+.link { position: relative; }
+
+.rim,
+.press,
+.glint {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.glint { display: none; }
+
+/* Chrome highlights stay in the rim, away from the title and description. */
+@supports (mask-composite: exclude) {
+  .rim {
+    inset: -1px;
+    padding: 3px;
+    overflow: hidden;
+    background: linear-gradient(126deg,
+      var(--metal-light, #d5b9ef) 0%,
+      transparent 28%,
+      var(--metal-edge, #8053ac) 55%,
+      transparent 77%,
+      var(--metal-light, #d5b9ef) 100%);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: var(--metal-strength, 0.82);
+  }
+
+  .surface { position: absolute; inset: 0; opacity: 0.78; }
+  .surface canvas { display: block; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .glint {
+      display: block;
+      opacity: 0;
+      background: linear-gradient(110deg,
+        transparent 14%,
+        var(--metal-light, #d5b9ef) 33%,
+        var(--metal-glint, #fff) 46% 54%,
+        var(--metal-light, #d5b9ef) 67%,
+        transparent 86%);
+      animation: vidroReflexo 7.2s linear infinite;
+    }
+  }
+}
+
+@keyframes vidroReflexo {
+  0% { transform: translateX(-85%); opacity: 0; }
+  5%, 25% { opacity: 1; }
+  30%, 100% { transform: translateX(85%); opacity: 0; }
+}
+
+.press { overflow: hidden; }
+
+.flash {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  opacity: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--metal-edge, #a67adc), transparent 70%);
+}

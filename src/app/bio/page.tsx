@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ArrowRight } from "lucide-react";
+import { LiquidMetalLink } from "@/components/ui/liquid-metal-button";
 import styles from "./bio.module.css";
 
 export const metadata: Metadata = {
@@ -28,8 +29,6 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#0a0710" };
 
-/* Sem cor nos blocos: um sólido em papel para o site e quatro de contorno.
-   O porquê e as medições estão no bio.module.css. */
 const links = [
   {
     title: "Nosso site",
@@ -54,6 +53,12 @@ const links = [
     detail: "Campanhas, institucionais e cobertura de eventos.",
     href: "https://www.youtube.com/@wordcompublicidade360",
     tom: "roxo",
+  },
+  {
+    title: "Túnel Santos–Guarujá Formulário",
+    detail: "Acesse o formulário da WordCom no Google Forms.",
+    href: "https://docs.google.com/forms/d/e/1FAIpQLSd8hXmWXn1Z7UeDJRFWfHsyWic6J1i3TyNBwaYXjN0VAFAaUA/viewform",
+    tom: "formulario",
   },
   {
     title: "Vamos conversar",
@@ -92,12 +97,11 @@ export default function BioPage() {
         </h1>
 
         <nav aria-label="Canais da WordCom" className={styles.links}>
-          {links.map(({ title, detail, href, tom }) => (
-            <a
+          {links.map(({ title, detail, href, tom }, index) => (
+            <LiquidMetalLink
               key={title}
               href={href}
-              target="_blank"
-              rel="noopener noreferrer"
+              glintDelay={180 + index * 850}
               className={`${styles.card} ${styles[tom]}`}
             >
               <span className={styles.corpo}>
@@ -106,7 +110,7 @@ export default function BioPage() {
               </span>
               <ArrowRight className={styles.seta} size={22} aria-hidden="true" />
               <span className={styles.srOnly}> (abre em uma nova aba)</span>
-            </a>
+            </LiquidMetalLink>
           ))}
         </nav>
 
